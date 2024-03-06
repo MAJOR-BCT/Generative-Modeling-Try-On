@@ -1,0 +1,301 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Three.js with Modules</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="module" src="viewer.js"></script>
+  </body>
+</html> -->
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Three.js Example</title>
+  </head>
+  <body>
+    <script type="module">
+      import * as THREE from "https://cdn.skypack.dev/three@0.127.0";
+      console.log(THREE); // Verify that THREE is imported correctly
+    </script>
+  </body>
+</html> -->
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Three.js with Modules</title>
+    <style>
+      body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      #images-container {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 20px;
+        background-color: #f0f0f0;
+        flex: 1;
+      }
+
+      #viewer-container {
+        padding: 20px;
+        flex: 2;
+      }
+
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="images-container">
+      <img id="image1" src="ryan.png" alt="Image 1" width="200" height="150" />
+      <img id="image2" src="ryan.png" alt="Image 2" width="200" height="150" />
+      <img id="image3" src="ryan.png" alt="Image 3" width="200" height="150" />
+    </div>
+    <div id="viewer-container">
+      <script type="module" src="viewer.js"></script>
+    </div>
+  </body>
+</html> -->
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Three.js with Modules</title>
+    <style>
+      body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      #images-container {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 20px;
+        background-color: #f0f0f0;
+        flex: 1;
+      }
+
+      #viewer-container {
+        padding: 20px;
+        flex: 2;
+      }
+
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="images-container">
+      <input type="file" id="image1Input" accept="image/*" />
+      <input type="file" id="image2Input" accept="image/*" />
+      <button id="submitImages">Submit</button>
+    </div>
+    <div id="viewer-container">
+      <script type="module" src="viewer.js"></script>
+    </div>
+
+    <script>
+      document
+        .getElementById("submitImages")
+        .addEventListener("click", function () {
+          const image1Input = document.getElementById("image1Input");
+          const image2Input = document.getElementById("image2Input");
+
+          const image1File = image1Input.files[0];
+          const image2File = image2Input.files[0];
+
+          if (image1File && image2File) {
+            const image1URL = URL.createObjectURL(image1File);
+            const image2URL = URL.createObjectURL(image2File);
+
+            const image1Element = document.createElement("img");
+            image1Element.src = image1URL;
+            image1Element.alt = "Image 1";
+            image1Element.width = 200;
+            image1Element.height = 150;
+            document
+              .getElementById("images-container")
+              .appendChild(image1Element);
+
+            const image2Element = document.createElement("img");
+            image2Element.src = image2URL;
+            image2Element.alt = "Image 2";
+            image2Element.width = 200;
+            image2Element.height = 150;
+            document
+              .getElementById("images-container")
+              .appendChild(image2Element);
+
+            setTimeout(function () {
+              const image3Element = document.createElement("img");
+              image3Element.src = "ryan.png"; // assuming you have an image named image3.jpg
+              image3Element.alt = "Image 3";
+              image3Element.width = 200;
+              image3Element.height = 150;
+              document
+                .getElementById("images-container")
+                .appendChild(image3Element);
+            }, 2000); // Display image 3 after 10 seconds
+
+            setTimeout(function () {
+              const plyLoader = new PLYLoader();
+              plyLoader.load("result2.ply", function (geometry) {
+                // Ensure vertex colors are available
+                if (!geometry.attributes.color) {
+                  console.warn("PLY file does not contain vertex colors.");
+                  return;
+                }
+                const pointsMaterial = new THREE.PointsMaterial({
+                  size: 0.05,
+                  vertexColors: THREE.VertexColors,
+                });
+                const points = new THREE.Points(geometry, pointsMaterial);
+                scene.add(points);
+              });
+            }, 2000); // Load PLY after 10 seconds
+          } else {
+            alert("Please select both images.");
+          }
+        });
+    </script>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Three.js with Modules</title>
+    <style>
+      body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      #images-container {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 20px;
+        background-color: #f0f0f0;
+        flex: 1;
+      }
+
+      #viewer-container {
+        padding: 20px;
+        flex: 2;
+      }
+
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="images-container">
+      <input type="file" id="image1Input" accept="image/*" />
+      <input type="file" id="image2Input" accept="image/*" />
+      <button id="submitImages">Submit</button>
+    </div>
+    <div id="viewer-container">
+      <script type="module" src="viewer.js"></script>
+    </div>
+
+    <script>
+      document
+        .getElementById("submitImages")
+        .addEventListener("click", function () {
+          const image1Input = document.getElementById("image1Input");
+          const image2Input = document.getElementById("image2Input");
+
+          const image1File = image1Input.files[0];
+          const image2File = image2Input.files[0];
+
+          if (image1File && image2File) {
+            const image1URL = URL.createObjectURL(image1File);
+            const image2URL = URL.createObjectURL(image2File);
+
+            const image1Element = document.createElement("img");
+            image1Element.src = image1URL;
+            image1Element.alt = "Image 1";
+            image1Element.width = 300;
+            image1Element.height = 250;
+            document
+              .getElementById("images-container")
+              .appendChild(image1Element);
+
+            const image2Element = document.createElement("img");
+            image2Element.src = image2URL;
+            image2Element.alt = "Image 2";
+            image2Element.width = 300;
+            image2Element.height = 250;
+            document
+              .getElementById("images-container")
+              .appendChild(image2Element);
+
+            setTimeout(function () {
+              const image3Element = document.createElement("img");
+              image3Element.src = "ryan.png"; // assuming you have an image named image3.jpg
+              image3Element.alt = "Image 3";
+              image3Element.width = 300;
+              image3Element.height = 200;
+              document
+                .getElementById("images-container")
+                .appendChild(image3Element);
+            }, 2000);
+
+            setTimeout(function () {
+              const plyLoader = new PLYLoader();
+              plyLoader.load("result2.ply", function (geometry) {
+                // Ensure vertex colors are available
+                if (!geometry.attributes.color) {
+                  console.warn("PLY file does not contain vertex colors.");
+                  return;
+                }
+                const pointsMaterial = new THREE.PointsMaterial({
+                  size: 0.05,
+                  vertexColors: THREE.VertexColors,
+                });
+                const points = new THREE.Points(geometry, pointsMaterial);
+                scene.add(points);
+              });
+
+              const viewerScript = document.createElement("script");
+              viewerScript.type = "module";
+              viewerScript.src = "viewer.js";
+              document
+                .getElementById("viewer-container")
+                .appendChild(viewerScript);
+            }, 2000); // Load PLY and Viewer after 2 seconds
+          } else {
+            alert("Please select both images.");
+          }
+        });
+    </script>
+  </body>
+</html>
