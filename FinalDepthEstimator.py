@@ -246,16 +246,16 @@ class FDEModel(BaseModel):
     @staticmethod
     def modify_commandline_options(parser, is_train=True):
     
-        parser.add_argument('--warproot', type=str, default='results/aligned/MTM/test_pairs', help='path to MTM result folder')
-        parser.add_argument('--input_gradient', action='store_true', default=True, help='if specified, add image (sobel) gradient to input')
-        parser.add_argument('--input_nc', type=int, default=8, help='input nc for FDE generator [base: 8 | input gradient: + 4]')
-        parser.add_argument('--output_nc', type=int, default=2, help='output nc for FDE generator')
-        parser.set_defaults(display_ncols=2)  # rewrite default values for this model.
+        parser.add_argument('--warproot', type=str, default='test_pairs')
+        parser.add_argument('--input_gradient', action='store_true', default=True)
+        parser.add_argument('--input_nc', type=int, default=8)
+        parser.add_argument('--output_nc', type=int, default=2)
+        parser.set_defaults(display_ncols=2)  
         parser.set_defaults(netD='basic')
-        parser.add_argument('--input_nc_D', type=int, default=4, help='3-channel normal map and 1-channel mask')
-        parser.add_argument('--add_grad_loss', action='store_true', default=True, help='if specified, use depth gardient loss')
-        parser.add_argument('--lambda_depth', type=float, default=1.0, help='weight for the depth loss')
-        parser.add_argument('--lambda_grad', type=float, default=1.0, help='weight for the depth gradinet loss')
+        parser.add_argument('--input_nc_D', type=int, default=4)
+        parser.add_argument('--add_grad_loss', action='store_true', default=True, )
+        parser.add_argument('--lambda_depth', type=float, default=1.0)
+        parser.add_argument('--lambda_grad', type=float, default=1.0)
         
         return parser
 
@@ -274,7 +274,7 @@ class FDEModel(BaseModel):
         if self.use_grad_loss:
             self.loss_names.extend(['fgrad', 'bgrad'])
         
-        # specify the images you want to save and display. The program will call base_model.get_current_visuals to save and display these images.
+        #  images to save and display
         self.visual_names = ['c', 'im_hhl', 'image_f_depth_initial', 'image_b_depth_initial']
         if self.input_gradient:
             self.visual_names.extend(['imhal_sobelx', 'imhal_sobely', 'c_sobelx', 'c_sobely'])

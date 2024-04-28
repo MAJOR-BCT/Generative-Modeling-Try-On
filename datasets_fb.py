@@ -221,15 +221,15 @@ class PVTONDataset(data.Dataset):
         result = {
             'c_name':   cloth_name,     # cloth path 
             'im_name':  image_name,    # original image as G.T 
-            'cloth':    c,          # cloth as an input
-            'cloth_mask':     cm,   # cloth mask as in input 
-            'image':    im,         # for visualization
+            'cloth':    c,          # cloth 
+            'cloth_mask':     cm,   # cloth mask 
+            'image':    im,         
             'agnostic': agnostic,   # for input
             'parse_cloth': im_c,    # for ground truth
-            'shape': shape,         # for visualization
-            'head': im_h,           # for visualization
-            'pose_image': im_pose,  # for visualization
-            'grid_image': im_g,     # for visualization
+            'shape': shape,         
+            'head': im_h,           
+            'pose_image': im_pose,  
+            'grid_image': im_g,     
             'parse_cloth_mask': pcm,     # for input of Style Aggregator Module
             'shape_ori': shape_ori,     # original body shape without resize
         }

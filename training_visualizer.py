@@ -8,7 +8,7 @@ class Visualizer():
 
     def __init__(self, config):
         
-        self.config = config  # cache the option
+        self.config = config  
         self.use_tensorboard = not config.no_tensorboard
         self.win_size = config.display_winsize
         self.name = config.name
@@ -16,13 +16,13 @@ class Visualizer():
         self.ncols = config.display_ncols
 
 
-        if self.use_tensorboard: # create board
+        if self.use_tensorboard: 
             tensorboard_dir = os.path.join(config.checkpoints_dir, config.datamode, config.name, 'tensorboard')
             print('create tensorboard directory %s...' % tensorboard_dir)
             util.mkdir(tensorboard_dir)
             self.board = SummaryWriter(log_dir = tensorboard_dir)
 
-        # create a logging file to store training losses
+        # logging file 
         self.log_name = os.path.join(config.checkpoints_dir, config.datamode, config.name, 'loss_log.txt')
         with open(self.log_name, "a") as log_file:
             now = time.strftime("%c")
@@ -88,19 +88,17 @@ class Visualizer():
         if self.use_tensorboard:
             for loss_name, loss_value in losses.items():
                 self.board.add_scalar('Loss/'+loss_name, loss_value, total_iters)
-            # add gpu usage info
-            # self.board.add_scalar('gpu allocated', round(torch.cuda.memory_allocated(0)/1024**3,1), total_iters)
-            # self.board.add_scalar('gpu reserved', round(torch.cuda.memory_reserved(0)/1024**3,1), total_iters)
+            
         else:
-            print('Plot failed, you need set config.no_tensorboard to False to plot current losses in tensorboard.')
+            print('Plot failed')
 
-    # losses: same format as |losses| of plot_current_losses
+    # losses
     def print_current_losses(self, epoch, iters, losses, t_comp, t_data):
         
         message = '(epoch: %d, iters: %d, time: %.3f, data: %.3f) ' % (epoch, iters, t_comp, t_data)
         for k, v in losses.items():
             message += '%s: %.3f ' % (k, v)
 
-        print(message)  # print the message
+        print(message)  
         with open(self.log_name, "a") as log_file:
-            log_file.write('%s\n' % message)  # save the message
+            log_file.write('%s\n' % message)  

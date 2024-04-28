@@ -164,7 +164,7 @@ if __name__ == '__main__':
             parse_roi_bbox_h = b_parse_roi - t_parse_roi
             parse_roi_bbox_w = r_parse_roi - l_parse_roi
             
-            # scale_factor & paste location
+            
             if c_bbox_w/c_bbox_h > parse_roi_bbox_w/parse_roi_bbox_h:
                 ratio = parse_roi_bbox_h / c_bbox_h
                 scale_factor = ratio * align_factor
@@ -174,14 +174,14 @@ if __name__ == '__main__':
             paste_x = int(parse_roi_center[0] - c_bbox_center[0]*scale_factor)
             paste_y = int(parse_roi_center[1] - c_bbox_center[1]*scale_factor)
 
-            # cloth alignment
+            
             c = c.resize((int(c.size[0]*scale_factor), int(c.size[1]*scale_factor)), Image.BILINEAR)
             blank_c = Image.fromarray(np.ones((512,320,3), np.uint8) * 255)
             blank_c.paste(c, (paste_x, paste_y))
             c = blank_c # PIL Image
             c.save(os.path.join(cloth_align_dst, cname))
 
-            # cloth mask alignment
+            
             cm = cm.resize((int(cm.size[0]*scale_factor), int(cm.size[1]*scale_factor)), Image.NEAREST)
             blank_cm = Image.fromarray(np.zeros((512,320), np.uint8))
             blank_cm.paste(cm, (paste_x, paste_y))
@@ -190,7 +190,7 @@ if __name__ == '__main__':
     print(f'clothes pre-alignment done and saved to {cloth_align_dst}!')
 
 
-    # -------------------- Segment Palms ------------------------ #
+    # ---------- Segment Palms ------------- #
     person_list = sorted([i for _,_,i in os.walk(person_root)][0])
     for person_name in tqdm(person_list):
         if ('@' in person_name):
@@ -239,7 +239,6 @@ if __name__ == '__main__':
     # print(person_list)
     for person_name in tqdm(person_list):
         
-        # ---------------only for testing the custom images-------------------------
         # for datasets handling, comment these 2 lines
         if ('@' in person_name):
             continue
@@ -249,7 +248,7 @@ if __name__ == '__main__':
         person_path = os.path.join(person_root, person_name)
         person = cv2.imread(person_path,0)
         
-        #kernel size is 5 for the sobel operation for each image of the person 
+        # kernel size is 5 for the sobel operation for each image of the person 
 
         sobelx = cv2.Sobel(person,cv2.CV_64F,1,0,ksize=5)
         sobely = cv2.Sobel(person,cv2.CV_64F,0,1,ksize=5)
@@ -271,4 +270,4 @@ if __name__ == '__main__':
     print(f'Getting image sobel done and saving to {gradient_dst}!')
 
 
-    print('******Data preprocessing done!******')
+    print('**Data preprocessing done!**')

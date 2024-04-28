@@ -33,8 +33,6 @@ def depth2point(fd, bd, rgb, rgb_back, parse_shape=None, label='gt', out_fn=None
             Z = fd[h,w]
             X = (w + 95) / 256 - 1
             
-            # gly = 512 - 1 - h # Window origin: top left --> OpenGL origin: bottom left
-            # Y = gly / 256.0 - 1.0 # [-1,1], Window --> World
             Y = (512 - 1 - h) / 256 - 1
             points.append("%f %f %f %d %d %d\n" % (X, Y, Z, color[0], color[1], color[2]))
     for h in range(512):

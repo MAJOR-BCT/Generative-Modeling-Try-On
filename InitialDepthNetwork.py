@@ -28,7 +28,7 @@ def get_norm_layer(norm_type='instance'):
 
 def init_weights(net, init_type='normal', init_gain=0.02):
     # Initialize network weights.
-    def init_func(m):  # define the initialization function
+    def init_func(m):  
         classname = m.__class__.__name__
         if hasattr(m, 'weight') and (classname.find('Conv') != -1 or classname.find('Linear') != -1):
             if init_type == 'normal':
@@ -164,57 +164,50 @@ class IDEModel(BaseModel):
     @staticmethod
     def modify_commandline_options(parser, is_train=True):
         
-        # parser.set_defaults(dataset_mode='unaligned')  # You can rewrite default values for this model.
-        parser.add_argument('--add_tps', action='store_true', default = True, help='if specified, add tps transformation')
-        parser.add_argument('--add_depth', action='store_true', default = True, help='if specified, add depth decoder')
-        # parser.add_argument('--use_featB_for_depth', action='store_true', help='if specified, use featB for depth')
-        parser.add_argument('--add_segmt', action='store_true', default = True, help='if specified, add segmentation decoder')        
-        parser.add_argument('--grid_size', type=int, default=3, help='size of the grid used to estimate TPS params.')                
-        parser.add_argument('--input_nc_A', type=int, default=29, help='input nc of feature extraction A [11 for roi agnostic type | 29 for full agnostic type]')
-        parser.add_argument('--input_nc_B', type=int, default=3, help='input nc of feature extraction B')
-        parser.add_argument('--n_layers_feat_extract', type=int, default=3, help='# layers in feater extraction of IDE')
-        parser.add_argument('--add_theta_loss', action='store_true', help='if specified, add theta loss')
-        parser.add_argument('--add_grid_loss', action='store_true', help='if specified, add grid loss') 
-        # parser.add_argument('--add_inlier_loss', action='store_true', help='if specified, add inlier loss') 
-        # parser.add_argument('--dilation_filter', type=int, default=0, help='type of dilation filter [0: no filter | 1: 4-neighs | 2: 8-neighs]')
-        parser.add_argument('--lambda_depth', type=float, default=1.0, help='weight of warp loss')
-        # parser.add_argument('--lambda_inlier', action='store_true', help='weight of grid loss')
+        
+        parser.add_argument('--add_tps', action='store_true', default = True)
+        parser.add_argument('--add_depth', action='store_true', default = True)
+       
+        parser.add_argument('--add_segmt', action='store_true', default = True)        
+        parser.add_argument('--grid_size', type=int, default=3)                
+        parser.add_argument('--input_nc_A', type=int, default=29)
+        parser.add_argument('--input_nc_B', type=int, default=3)
+        parser.add_argument('--n_layers_feat_extract', type=int, default=3)
+        parser.add_argument('--add_theta_loss', action='store_true')
+        parser.add_argument('--add_grid_loss', action='store_true') 
+        parser.add_argument('--lambda_depth', type=float, default=1.0)
         
         return parser
 
     def __init__(self, config):
         
-        BaseModel.__init__(self, config)  # call the initialization method of BaseModel
+        BaseModel.__init__(self, config)  
         
         self.add_depth = config.add_depth
         
-        # specify the training losses you want to print out. The program will call base_model.get_current_losses to plot the losses to the console and save them to the disk.
         self.loss_names = ['IDE']
         if self.add_depth:
             self.loss_names.extend(['fdepth', 'bdepth'])
               
-        # specify the images you want to save and display. The program will call base_model.get_current_visuals to save and display these images.
         self.visual_names = ['im_hhl','im_shape','pose']
         if self.add_depth:
             self.visual_names.extend(['fdepth_pred', 'fdepth_gt', 'fdepth_diff', 'bdepth_pred', 'bdepth_gt', 'bdepth_diff'])
 
-        # specify the models you want to save to the disk. The program will call base_model.save_networks and base_model.load_networks to save and load networks. (you can use config.isTrain to specify different behaviors for training and test. For example, some networks will not be used during test, and you don't need to load them.)
         self.model_names = ['IDE']
         
-        # define networks; you can use config.isTrain to specify different behaviors for training and test.
         self.netIDE = define_IDE(config.input_nc_A, config.input_nc_B, config.ngf, config.n_layers_feat_extract, config.img_height, config.img_width, config.grid_size, config.add_tps, config.add_depth, config.add_segmt, config.norm, config.use_dropout, config.init_type, config.init_gain, self.gpu_ids)
 
-        if self.isTrain:  # only defined during training time
-            # define loss functions.
+        if self.isTrain:  
+            
             self.criterionWarp = torch.nn.L1Loss()
             if self.add_depth:
                 self.criterionDepth = torch.nn.L1Loss()
 
-            # define and initialize configimizers. You can define one configimizer for each network.
+           
             self.optimizer = torch.configim.Adam(self.netIDE.parameters(), lr=config.lr, betas=(0.5, 0.999))
             self.optimizers = [self.optimizer]
 
-        # Our program will automatically call <model.setup> to define schedulers, load networks, and print networks
+        
 
     def set_input(self, input):
         
@@ -244,8 +237,8 @@ class IDEModel(BaseModel):
             self.fdepth_pred = torch.tanh(self.fdepth_pred)
             self.bdepth_pred = torch.tanh(self.bdepth_pred)
             if self.isTrain:
-                self.fdepth_diff = self.fdepth_pred - self.fdepth_gt # just for visual
-                self.bdepth_diff = self.bdepth_pred - self.bdepth_gt # fust for visual
+                self.fdepth_diff = self.fdepth_pred - self.fdepth_gt 
+                self.bdepth_diff = self.bdepth_pred - self.bdepth_gt 
         
     def backward(self):
         self.loss_IDE = torch.tensor(0.0, requires_grad=True).to(self.device)
@@ -264,7 +257,7 @@ class IDEModel(BaseModel):
         self.optimizer.step()       
 
     def compute_visuals(self):
-        # convert raw scores to 1-channel mask that can be visualized
+        
         # segmt_pred: size (batch_size, 1, 512, 320)
         if self.add_segmt:
             self.segmt_pred_vis = util.decode_labels(self.segmt_pred_argmax)

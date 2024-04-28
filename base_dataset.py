@@ -1,7 +1,3 @@
-"""This module implements an abstract base class (ABC) 'BaseDataset' for datasets.
-
-It also includes common transformation functions (e.g., get_transform, __scale_width), which can be later used in subclasses.
-"""
 import random
 import os
 import numpy as np
@@ -171,18 +167,18 @@ def __print_size_warning(ow, oh, w, h):
 
 def find_dataset_using_name(dataset_name):
     
-    dataset_filename = "data." + dataset_name + "_MPV3dDataset"
+    dataset_filename = "data." + dataset_name 
     datasetlib = importlib.import_module(dataset_filename)
 
     dataset = None
-    target_dataset_name = dataset_name.replace('_', '') + 'MPV3dDataset'
+    target_dataset_name = dataset_name.replace('_', '') 
     for name, cls in datasetlib.__dict__.items():
         if name.lower() == target_dataset_name.lower() \
            and issubclass(cls, BaseDataset):
             dataset = cls
 
     if dataset is None:
-        raise NotImplementedError("In %s.py, there should be a subclass of BaseDataset with class name that matches %s in lowercase." % (dataset_filename, target_dataset_name))
+        raise NotImplementedError("In %s.py, should be a subclass of BaseDataset %s in lowercase." % (dataset_filename, target_dataset_name))
 
     return dataset
 

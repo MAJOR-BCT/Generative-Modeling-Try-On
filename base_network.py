@@ -24,47 +24,43 @@ class BaseOptions():
     def initialize(self, parser):
        
         # basic parameters
-        parser.add_argument('--dataroot', type=str, default='depth_example',help='path to dataset')
-        parser.add_argument('--datamode', type=str, default='aligned',help='dataset mode for MTM [unaligned | aligned]')
-        parser.add_argument('--datalist', type=str, default='test_pairs', help='depth data list [train_pairs | test_pairs | test_score]')
-        parser.add_argument('--name', type=str, default='MTM', help='name of the experiment. It decides where to store samples and models')
-        parser.add_argument('--suffix', default='', type=str, help='customized suffix: opt.name = opt.name + suffix')
-        parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0,1,2, currently we only support single GPU, use -1 for CPU')
-        parser.add_argument('--checkpoints_dir', type=str, default='pretrained', help='models are saved to opt.checkpoints_dir/opt.datamode/opt.name')
+        parser.add_argument('--dataroot', type=str, default='depth_example')
+        parser.add_argument('--datamode', type=str, default='aligned')
+        parser.add_argument('--datalist', type=str, default='test_pairs')
+        parser.add_argument('--name', type=str, default='MTM')
+        parser.add_argument('--suffix', default='', type=str)
+        parser.add_argument('--gpu_ids', type=str, default='0')
+        parser.add_argument('--checkpoints_dir', type=str, default='pretrained')
         # model parameters
-        parser.add_argument('--model', type=str, default='MTM', help='chooses which model to use. [MTM | DRM | TFM]')
-        parser.add_argument('--ngf', type=int, default=64, help='# of gen filters in the first conv layer')
-        parser.add_argument('--netD', type=str, default='basic', help='specify discriminator architecture [basic | n_layers | pixel | spectral_norm]. The basic model is a 70x70 PatchGAN. n_layers allows you to specify the layers in the discriminator')
-        parser.add_argument('--ndf', type=int, default=64, help='# of discrim filters in the first conv layer')
-        parser.add_argument('--n_layers_D', type=int, default=3, help='only used if netD==n_layers')
-        parser.add_argument('--norm', type=str, default='instance', help='instance normalization or batch normalization [instance | batch | none]')
-        parser.add_argument('--init_type', type=str, default='normal', help='network initialization [normal | xavier | kaiming | orthogonal]')
-        parser.add_argument('--init_gain', type=float, default=0.02, help='scaling factor for normal, xavier and orthogonal.')
-        parser.add_argument('--use_dropout', action='store_true', help='use dropout for the generator')
+        parser.add_argument('--model', type=str, default='MTM')
+        parser.add_argument('--ngf', type=int, default=64)
+        parser.add_argument('--netD', type=str, default='basic')
+        parser.add_argument('--ndf', type=int, default=64)
+        parser.add_argument('--n_layers_D', type=int, default=3)
+        parser.add_argument('--norm', type=str, default='instance')
+        parser.add_argument('--init_type', type=str, default='normal')
+        parser.add_argument('--init_gain', type=float, default=0.02)
+        parser.add_argument('--use_dropout', action='store_true')
         # dataset parameters
-        parser.add_argument('--max_dataset_size', type=int, default=float("inf"), help='Maximum number of samples allowed per dataset. If the dataset directory contains more than max_dataset_size, only a subset is loaded.')
-        parser.add_argument('--img_height', type=int, default=512, help='img height in the dataset')
-        parser.add_argument('--img_width', type=int, default=320, help='img width in the dataset')
-        parser.add_argument('--batch_size', type=int, default=8, help='input batch size (suggested 8 for MTM, 4 for TFM)')
-        parser.add_argument('--serial_batches', action='store_true', help='if true, takes images in order to make batches, otherwise takes them randomly')
-        parser.add_argument('--num_threads', default=8, type=int, help='# threads for loading data (suggested 8 for MTM, 1 for TFM)')
-        parser.add_argument('--no_pin_memory', action='store_true', help='if specified, not pin data to memory')
+        parser.add_argument('--max_dataset_size', type=int, default=float("inf"))
+        parser.add_argument('--img_height', type=int, default=512)
+        parser.add_argument('--img_width', type=int, default=320)
+        parser.add_argument('--batch_size', type=int, default=8)
+        parser.add_argument('--serial_batches', action='store_true')
+        parser.add_argument('--num_threads', default=8, type=int)
+        parser.add_argument('--no_pin_memory', action='store_true')
         # additional parameters
-        parser.add_argument('--epoch', type=str, default='latest', help='which epoch to load? set to latest to use latest cached model')
-        parser.add_argument('--load_iter', type=int, default='0', help='which iteration to load? if load_iter > 0, the code will load models by iter_[load_iter]; otherwise, the code will load models by [epoch]')
-        parser.add_argument('--display_winsize', type=int, default=512, help='display window size for HTML')
-        parser.add_argument('--verbose', action='store_true', help='if specified, print more debugging information')
+        parser.add_argument('--epoch', type=str, default='latest')
+        parser.add_argument('--load_iter', type=int, default='0')
+        parser.add_argument('--display_winsize', type=int, default=512)
+        parser.add_argument('--verbose', action='store_true')
         
         self.initialized = True
         return parser
 
     def gather_options(self):
-        """Initialize our parser with basic options(only once).
-        Add additional model-specific and dataset-specific options.
-        These options are defined in the <modify_commandline_options> function
-        in model and dataset classes.
-        """
-        if not self.initialized:  # check if it has been initialized
+        
+        if not self.initialized:  
             parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
             parser = self.initialize(parser)
 
@@ -108,9 +104,9 @@ class BaseOptions():
     def parse(self):
         
         opt = self.gather_options()
-        opt.isTrain = self.isTrain   # train or test
+        opt.isTrain = self.isTrain   
 
-        # process opt.suffix
+        
         if opt.suffix:
             suffix = ('_' + opt.suffix.format(**vars(opt))) if opt.suffix != '' else ''
             opt.name = opt.name + suffix
@@ -158,8 +154,8 @@ class BaseModel(ABC):
         self.config = config
         self.gpu_ids = config.gpu_ids
         self.isTrain = config.isTrain
-        self.device = torch.device('cuda:{}'.format(self.gpu_ids[0])) if self.gpu_ids else torch.device('cpu')  # get device name: CPU or GPU
-        self.save_dir = os.path.join(config.checkpoints_dir, config.datamode, config.name)  # save all the checkpoints to save_dir.
+        self.device = torch.device('cuda:{}'.format(self.gpu_ids[0])) if self.gpu_ids else torch.device('cpu')  
+        self.save_dir = os.path.join(config.checkpoints_dir, config.datamode, config.name)  
         self.loss_names = []
         self.model_names = []
         self.visual_names = []
@@ -306,7 +302,7 @@ def find_model_using_name(model_name):
             model = cls
 
     if model is None:
-        print("In %s.py, there should be a subclass of BaseModel with class name that matches %s in lowercase." % (model_filename, target_model_name))
+        print("In %s.py should be a subclass of BaseModel " % (model_filename, target_model_name))
         exit(0)
 
     return model
